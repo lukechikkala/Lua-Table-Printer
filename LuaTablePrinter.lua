@@ -1,4 +1,22 @@
 
+--------------------------------------------------------------------------------
+-- Lua Table Printer
+-- -----------------
+--
+-- Author: Luke Chikkala
+-- git@github.com:lukechikkala/Lua-Table-Printer.git
+--
+-- Info:
+--      Prints a Lua table in a "neat" foramt.
+--
+-- Usage:
+--      local printtable = require( "TablePrinter" )
+--      printtable( myTable )
+--
+--------------------------------------------------------------------------------
+
+local TablePrinter = {}
+
 local function PrintBorders( spacersize, max_tab_size, max_key_size, max_key_type_size, max_val_size, max_val_type_size )
     local borders   =    "+"
                     -- No
@@ -117,7 +135,6 @@ end
 local function PrintTValues( spacersize, max_tab_size, max_key_size, max_key_type_size, max_val_size, max_val_type_size, myTable )
     local spacer        = " "
     local myKeys        = {}
-    local myKeyTypes    = {}
     local count         = 1
 
     -- Extracting only Keys
@@ -178,36 +195,28 @@ local function PrintTValues( spacersize, max_tab_size, max_key_size, max_key_typ
     end
 end
 
-local function TableDissector( myTable )
-    local ss, size_t, size_k, size_k_t, size_v, size_v_t = GetTableInfo( myTable )
-    PrintBorders( ss, size_t, size_k, size_k_t, size_v, size_v_t )
-    PrintHeaders( ss, size_t, size_k, size_k_t, size_v, size_v_t )
-    PrintBorders( ss, size_t, size_k, size_k_t, size_v, size_v_t )
-    PrintTValues( ss, size_t, size_k, size_k_t, size_v, size_v_t, myTable )
-    PrintBorders( ss, size_t, size_k, size_k_t, size_v, size_v_t )
+--- Prints a table in a clean format
+-- @param myTable table to dissect and print.
+function TablePrinter.Print( myTable )
+    assert( type( myTable ) == "table", "TablePrinter.Print expects a table; got " .. type( myTable ) )
+
+    local spacersize, size_t, size_k, size_k_t, size_v, size_v_t = GetTableInfo( myTable )
+    PrintBorders( spacersize, size_t, size_k, size_k_t, size_v, size_v_t )
+    PrintHeaders( spacersize, size_t, size_k, size_k_t, size_v, size_v_t )
+    PrintBorders( spacersize, size_t, size_k, size_k_t, size_v, size_v_t )
+    PrintTValues( spacersize, size_t, size_k, size_k_t, size_v, size_v_t, myTable )
+    PrintBorders( spacersize, size_t, size_k, size_k_t, size_v, size_v_t )
 end
 
-local function main()
-    local myTable = {
-        [ "Name" ]           = "Hello World"
-       ,[ "Version" ]        = "2.1.5"
-       ,[ "Author" ]         = "Luke"
-       ,[ "Enabled" ]        = true
-       ,[ "Alive" ]          = false
-       ,[ "Health" ]         = 100
-       ,[ "Speed" ]          = 3.14159
-       ,[ "Pi" ]             = 3.141592653589793
-       ,[ "Nothing" ]        = nil
-       ,[ 1 ]                = "First"
-       ,[ 2 ]                = "Second"
-       ,[ 3 ]                = 4
-       ,[ 42 ]               = true
-       ,[ true ]             = "Boolean Key"
-       ,[ false ]            = 0
+-- TablePrinter( myTable ) would be the shortcut for TablePrinter.Print( myTable )
+setmetatable(
+     TablePrinter
+    ,{
+        __call = function( _, myTable )
+            TablePrinter.Print( myTable )
+        end
     }
+)
 
-    TableDissector( myTable )
-end
-
-main()
+return TablePrinter
 
