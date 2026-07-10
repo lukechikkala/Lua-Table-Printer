@@ -28,4 +28,9 @@ The `example.lua` shows how it can be used.
 | 14 | true    | string   |             nil | nil        |
 +----+---------+----------+-----------------+------------+
 ```
+# License
+
+MIT - use it, fork it, break it, make it better, send pull requests :)
+
+See [LICENSE](LICENSE) for the boring legal part.
 
